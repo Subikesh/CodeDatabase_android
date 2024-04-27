@@ -5,6 +5,8 @@ compose = "1.6.6"
 compose-compiler = "1.5.12"
 compose-material3 = "1.2.1"
 androidx-activityCompose = "1.9.0"
+navigationCompose = "2.7.5"
+
 ktor = "2.3.0"
 kx-serialization = "1.6.3"
 kx-datetime = "0.6.0-RC.2"
@@ -12,6 +14,7 @@ kx-datetime = "0.6.0-RC.2"
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
