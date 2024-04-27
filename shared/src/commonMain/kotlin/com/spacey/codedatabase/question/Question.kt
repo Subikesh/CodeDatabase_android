@@ -1,5 +1,7 @@
 package com.spacey.codedatabase.question
 
+import kotlinx.datetime.Instant
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -11,7 +13,8 @@ data class Question(
     val difficulty: String,
     val tag: List<String>,
     val examples: String,
-    val solutions: List<Solution>
+    val solutions: List<Solution>,
+    @SerialName("date_added") val dateAdded: Instant
 )
 
 @Serializable
@@ -21,5 +24,5 @@ data class Solution(
     val program: String,
     val notes: String,
     val link: String,
-//    val dateAdded: DateTime
+    @SerialName("date_added") val dateAdded: Instant
 )
