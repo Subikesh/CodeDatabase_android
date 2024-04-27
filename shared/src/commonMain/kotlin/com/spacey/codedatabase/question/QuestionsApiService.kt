@@ -5,7 +5,7 @@ import io.ktor.client.call.body
 import io.ktor.http.isSuccess
 
 class QuestionsApiService : NetworkService() {
-    suspend fun getAllQuestions(): Result<String> {
+    suspend fun getAllQuestions(): Result<List<Question>> {
         return try {
             val response = request("questions")
             if (response.status.isSuccess()) {
