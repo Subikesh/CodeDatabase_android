@@ -7,11 +7,11 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Question(
     val title: String,
-    val access: String,
+    val access: Access,
     val description: String,
     val link: String,
-    val difficulty: String,
-    val tag: List<String>,
+    val difficulty: Difficulty,
+    val tag: List<Int>,
     val examples: String,
     val solutions: List<Solution>,
     @SerialName("date_added") val dateAdded: Instant
@@ -26,3 +26,11 @@ data class Solution(
     val link: String,
     @SerialName("date_added") val dateAdded: Instant
 )
+
+enum class Difficulty {
+    Easy, Medium, Hard
+}
+
+enum class Access {
+    Public, Private
+}
