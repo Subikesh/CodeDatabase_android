@@ -1,11 +1,13 @@
 package com.spacey.codedatabase.android.home
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Button
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -52,24 +54,19 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel()) {
                 }
             }
 
-            item {
-                greetingText = uiState.questionsList.fold(
-                    onSuccess = {
-                        "Success: $it"
-                    },
-                    onFailure = { exception ->
-                        exception.printStackTrace()
-                        exception.stackTraceToString()
+            if (uiState.questionsList.isSuccess) {
+                items(uiState.questionsList.getOrThrow()) { question ->
+                    QuestionCard(question = question, modifier = Modifier.padding(top = 16.dp))
+                }
+            } else {
+                item(Modifier.fillMaxSize()) {
+                    Column {
+                        Text(
+                            text = "Something went wrong when fetching questions",
+                            style = MaterialTheme.typography.titleLarge,
+                            color = MaterialTheme.colorScheme.primary
+                        )
                     }
-                )
-                Text(text = greetingText, modifier = Modifier.padding(vertical = 16.dp))
-            }
-
-            item {
-                Button({
-                    viewModel.onEvent(HomeEvent.Initialise)
-                }) {
-                    Text("Reload")
                 }
             }
         }
