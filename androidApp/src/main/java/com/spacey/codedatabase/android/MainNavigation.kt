@@ -56,7 +56,9 @@ fun HomeNavigation() {
                     onClick = {
                         navController.navigateTopLevel(destination.route)
                     },
-                    icon = { Icon(imageVector = destination.icon, contentDescription = destination.iconText) }
+                    icon = { Icon(imageVector = destination.icon, contentDescription = destination.label) },
+                    label = { Text(text = destination.label) },
+                    alwaysShowLabel = false
                 )
             }
         }
@@ -74,7 +76,7 @@ fun HomeNavigation() {
             AnimatedContent(targetState = fabState, label = "Home FAB") { fabState ->
                 Icon(
                     imageVector = fabState.destination.icon,
-                    contentDescription = fabState.destination.iconText,
+                    contentDescription = fabState.destination.label,
                     Modifier.size(28.dp)
                 )
             }
@@ -115,7 +117,7 @@ val TOP_LEVEL_DESTINATIONS = listOf(
 sealed class Destination(
     val route: String,
     val icon: ImageVector,
-    val iconText: String
+    val label: String
 ) {
     data object HOME : Destination("home", Icons.Default.Home, "Home")
     data object ACCOUNT : Destination("account", Icons.Default.AccountCircle, "Account")
