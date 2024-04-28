@@ -1,7 +1,6 @@
 package com.spacey.codedatabase.android.home
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -58,14 +57,12 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel()) {
                     QuestionCard(question = question, modifier = Modifier.padding(vertical = 8.dp))
                 }
             } else {
-                item(Modifier.fillMaxSize()) {
-                    Column {
-                        Text(
-                            text = "Something went wrong when fetching questions",
-                            style = MaterialTheme.typography.titleLarge,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
+                item {
+                    Text(
+                        text = "Something went wrong when fetching questions",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
                 }
             }
         }
