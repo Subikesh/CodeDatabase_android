@@ -16,10 +16,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 
 @Composable
-fun HomeScreen(navController: NavController, modifier: Modifier = Modifier, viewModel: HomeViewModel = viewModel()) {
+fun HomeScreen(modifier: Modifier = Modifier, viewModel: HomeViewModel = viewModel()) {
     var greetingText by remember { mutableStateOf("") }
     val uiState by viewModel.uiState.collectAsState()
     LaunchedEffect(key1 = true) {

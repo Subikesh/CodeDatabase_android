@@ -1,19 +1,29 @@
 package com.spacey.codedatabase.android
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -28,6 +38,13 @@ fun HomeNavigation() {
     val backstackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backstackEntry?.destination?.route ?: Destination.HOME.route
 
+    var fabState: FabState by remember {
+        mutableStateOf(FabState.ADD)
+    }
+
+    var submitClicked by remember {
+        mutableStateOf(false)
+    }
 
     Scaffold(bottomBar = {
         NavigationBar {
@@ -41,18 +58,43 @@ fun HomeNavigation() {
                 )
             }
         }
+    }, floatingActionButton = {
+        FloatingActionButton(shape = RoundedCornerShape(20.dp), onClick = {
+            if (fabState == FabState.SUBMIT) {
+                submitClicked = true
+            }
+            navController.navigate(fabState.destination.route)
+        }) {
+            AnimatedContent(targetState = fabState, label = "Home FAB") { fabState ->
+                Icon(imageVector = fabState.destination.icon, contentDescription = fabState.destination.iconText)
+            }
+        }
     }) {
         Box(modifier = Modifier.padding(it)) {
             NavHost(navController = navController, startDestination = currentRoute) {
                 composable(Destination.HOME.route) {
-                    HomeScreen(navController = navController)
+                    fabState = FabState.ADD
+                    HomeScreen()
                 }
                 composable(Destination.ACCOUNT.route) {
+                    fabState = FabState.EDIT
+                    EmptyComingSoon()
+                }
+                composable(Destination.NEW_QUESTION.route) {
+                    fabState = FabState.SUBMIT
+                    EmptyComingSoon()
+                }
+                composable(Destination.EDIT_QUESTION.route) {
+                    fabState = FabState.SUBMIT
                     EmptyComingSoon()
                 }
             }
         }
     }
+}
+
+enum class FabState(val destination: Destination) {
+    ADD(Destination.NEW_QUESTION), EDIT(Destination.EDIT_QUESTION), SUBMIT(Destination.SUBMIT)
 }
 
 val TOP_LEVEL_DESTINATIONS = listOf(
@@ -67,6 +109,9 @@ sealed class Destination(
 ) {
     data object HOME : Destination("home", Icons.Default.Home, "Home")
     data object ACCOUNT : Destination("account", Icons.Default.AccountCircle, "Account")
+    data object NEW_QUESTION : Destination("add_question", Icons.Default.Add, "New Question")
+    data object EDIT_QUESTION : Destination("edit_question/{question_id}", Icons.Default.Edit, "Edit question")
+    data object SUBMIT : Destination("home", Icons.Default.Done, "Submit form")
 }
 
 fun NavHostController.navigateTopLevel(route: String) {
