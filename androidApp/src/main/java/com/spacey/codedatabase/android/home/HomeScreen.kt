@@ -24,7 +24,6 @@ import com.spacey.codedatabase.android.component.CdSearchBar
 
 @Composable
 fun HomeScreen(viewModel: HomeViewModel = viewModel()) {
-    var greetingText by remember { mutableStateOf("") }
     val uiState by viewModel.uiState.collectAsState()
 
     var query by remember {
@@ -56,7 +55,7 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel()) {
 
             if (uiState.questionsList.isSuccess) {
                 items(uiState.questionsList.getOrThrow()) { question ->
-                    QuestionCard(question = question, modifier = Modifier.padding(top = 16.dp))
+                    QuestionCard(question = question, modifier = Modifier.padding(vertical = 8.dp))
                 }
             } else {
                 item(Modifier.fillMaxSize()) {
