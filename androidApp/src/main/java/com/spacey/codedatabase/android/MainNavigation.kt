@@ -3,6 +3,7 @@ package com.spacey.codedatabase.android
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
@@ -10,8 +11,9 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LargeFloatingActionButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -59,14 +61,22 @@ fun HomeNavigation() {
             }
         }
     }, floatingActionButton = {
-        FloatingActionButton(shape = RoundedCornerShape(20.dp), onClick = {
-            if (fabState == FabState.SUBMIT) {
-                submitClicked = true
-            }
-            navController.navigate(fabState.destination.route)
-        }) {
+        LargeFloatingActionButton(
+            shape = RoundedCornerShape(20.dp),
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+            contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+            onClick = {
+                if (fabState == FabState.SUBMIT) {
+                    submitClicked = true
+                }
+                navController.navigate(fabState.destination.route)
+            }) {
             AnimatedContent(targetState = fabState, label = "Home FAB") { fabState ->
-                Icon(imageVector = fabState.destination.icon, contentDescription = fabState.destination.iconText)
+                Icon(
+                    imageVector = fabState.destination.icon,
+                    contentDescription = fabState.destination.iconText,
+                    Modifier.size(28.dp)
+                )
             }
         }
     }) {
