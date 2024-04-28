@@ -27,8 +27,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.spacey.codedatabase.android.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -78,6 +80,11 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel()) {
                             Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
                         }
                     }
+                }, trailingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.filter_list_24),
+                        contentDescription = "Filter list",
+                        modifier = Modifier.clickable { /* TODO */ })
                 }, placeholder = {
                     Text(text = "Search Questions")
                 }) {
