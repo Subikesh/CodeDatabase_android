@@ -36,9 +36,16 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.spacey.codedatabase.android.home.HomeScreen
 import com.spacey.codedatabase.android.home.HomeViewModel
+import com.spacey.codedatabase.android.user.UserScreen
+import com.spacey.codedatabase.android.user.UserViewModel
 
 @Composable
-fun HomeNavigation(homeViewModel: HomeViewModel = viewModel(), navController: NavHostController = rememberNavController()) {
+fun HomeNavigation(
+    homeViewModel: HomeViewModel = viewModel(),
+    userViewModel: UserViewModel = viewModel(),
+    navController: NavHostController = rememberNavController(),
+    navigateToLogin: () -> Unit
+) {
     val backstackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backstackEntry?.destination?.route ?: Destination.HOME.route
 
@@ -92,7 +99,7 @@ fun HomeNavigation(homeViewModel: HomeViewModel = viewModel(), navController: Na
                 }
                 composable(Destination.ACCOUNT.route) {
                     fabState = FabState.EDIT
-                    EmptyComingSoon()
+                    UserScreen(userViewModel, navigateToLogin)
                 }
                 composable(Destination.NEW_QUESTION.route) {
                     fabState = FabState.SUBMIT

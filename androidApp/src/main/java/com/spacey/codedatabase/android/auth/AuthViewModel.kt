@@ -1,4 +1,4 @@
-package com.spacey.codedatabase.android.login
+package com.spacey.codedatabase.android.auth
 
 import androidx.lifecycle.viewModelScope
 import com.spacey.codedatabase.AppComponent
@@ -8,7 +8,7 @@ import kotlinx.coroutines.launch
 
 class AuthViewModel : BaseViewModel<AuthUiState, AuthEvent>() {
 
-    override val _uiState: MutableStateFlow<AuthUiState> = MutableStateFlow(AuthUiState())
+    override val _uiState = MutableStateFlow(AuthUiState())
 
     private val authRepository = AppComponent.instance.authRepository
 
@@ -28,21 +28,17 @@ class AuthViewModel : BaseViewModel<AuthUiState, AuthEvent>() {
                     }
                     token
                 }
-
-                is AuthEvent.Logout -> {
-                    authRepository.logout()
-                    null
-                }
             }
             _uiState.value = uiState.value.copy(isLoading = false, isAuthenticated = !authToken.isNullOrEmpty(), loginError = loginError)
         }
     }
+
+    fun isAuthenticated() = !authRepository.getAuthToken().isNullOrEmpty()
 }
 
 sealed class AuthEvent {
     data object Initiate : AuthEvent()
     data class Login(val userName: String, val password: String) : AuthEvent()
-    data object Logout : AuthEvent()
 }
 
 data class AuthUiState(
