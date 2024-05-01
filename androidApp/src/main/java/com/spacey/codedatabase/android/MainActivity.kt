@@ -6,10 +6,12 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.spacey.codedatabase.android.login.LoginScreen
+import com.spacey.codedatabase.android.auth.AuthViewModel
+import com.spacey.codedatabase.android.auth.LoginScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,16 +20,24 @@ class MainActivity : ComponentActivity() {
             MyApplicationTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     val navController = rememberNavController()
-                    NavHost(navController = navController, startDestination = "login") {
-                        composable("login") {
-                            LoginScreen(navController = navController)
+                    val authViewModel: AuthViewModel = viewModel()
+                    val startDestination = if (authViewModel.isAuthenticated()) TopLevelDestination.CODE_DB.route else TopLevelDestination.LOGIN.route
+                    NavHost(navController = navController, startDestination = startDestination) {
+                        composable(TopLevelDestination.LOGIN.route) {
+                            LoginScreen(navController, authViewModel)
                         }
-                        composable("code_database") {
-                            HomeNavigation()
+                        composable(TopLevelDestination.CODE_DB.route) {
+                            HomeNavigation {
+                                navController.navigateTopLevel(TopLevelDestination.LOGIN.route)
+                            }
                         }
                     }
                 }
             }
         }
     }
+}
+
+enum class TopLevelDestination(val route: String) {
+    LOGIN("login"), CODE_DB("code_database")
 }

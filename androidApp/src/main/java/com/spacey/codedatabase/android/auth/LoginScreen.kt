@@ -1,5 +1,6 @@
-package com.spacey.codedatabase.android.login
+package com.spacey.codedatabase.android.auth
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -36,12 +37,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.spacey.codedatabase.android.TopLevelDestination
 import com.spacey.codedatabase.android.navigateTopLevel
 
 @Composable
-fun LoginScreen(navController: NavController, authViewModel: AuthViewModel = viewModel()) {
+fun LoginScreen(navController: NavController, authViewModel: AuthViewModel) {
     var userName by remember {
         mutableStateOf("")
     }
@@ -57,9 +58,18 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel = vie
     LaunchedEffect(key1 = true) {
         authViewModel.onEvent(AuthEvent.Initiate)
     }
-
     if (uiState.isAuthenticated) {
-        navController.navigateTopLevel("code_database")
+        LaunchedEffect(key1 = true) {
+            Log.d("Refresh", "Refresh screen")
+            navController.navigateTopLevel(TopLevelDestination.CODE_DB.route)
+        }
+    }
+
+    if (uiState.isLoading) {
+        Log.d("Refresh", "Loading")
+        Box(modifier = Modifier.fillMaxSize()) {
+            CircularProgressIndicator()
+        }
     } else {
         Box(
             modifier = Modifier

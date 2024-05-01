@@ -30,7 +30,9 @@ import com.spacey.codedatabase.question.Question
 fun QuestionCard(question: Question, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val intent = remember {
-        Intent(Intent.ACTION_VIEW, Uri.parse(question.link))
+        question.link?.let {
+            Intent(Intent.ACTION_VIEW, Uri.parse(question.link))
+        }
     }
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -40,9 +42,9 @@ fun QuestionCard(question: Question, modifier: Modifier = Modifier) {
         Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
             Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    text = question.title,
+                    text = question.title.trim(),
                     style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.align(Alignment.CenterVertically)
+                    modifier = Modifier.padding(vertical = 8.dp)
                 )
                 if (question.link != null) {
                     IconButton(
