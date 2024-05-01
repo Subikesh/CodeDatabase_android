@@ -19,11 +19,30 @@ class AuthRepository(private val settings: Settings, private val authApiService:
                     settings.authToken = res.token
                     return res.token
                 }
+                /* TODO: Error handling if it was bad credentials */
             }
         } catch (e: Exception) {
             e.printStackTrace()
         }
         return null
+    }
+
+    suspend fun getCurrentUser(): Result<User> {
+        return try {
+            val cachedUser = codeDbCache.currentUser
+            if (cachedUser == null) {
+                withContext(defaultContext) {
+                    authApiService.getCurrentUser().map {
+                        codeDbCache.currentUser = it
+                        it
+                    }
+                }
+            } else {
+                Result.success(cachedUser)
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 
     fun getAuthToken() = settings.authToken
