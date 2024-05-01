@@ -1,7 +1,6 @@
 package com.spacey.codedatabase.android.user
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,7 +9,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -38,23 +36,21 @@ fun UserScreen(userViewModel: UserViewModel, navigateToLogin: () -> Unit) {
     }
 
     val currentUser = uiState.currentUser
-    if (currentUser != null) {
-        Row(horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxSize()) {
+    Row(horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxSize()) {
+        if (currentUser != null) {
             Column(Modifier.padding(top = 40.dp, start = 16.dp, end = 16.dp)) {
                 Text(text = "Hi, ", style = MaterialTheme.typography.titleLarge)
                 Text(text = currentUser.fullName, style = MaterialTheme.typography.displayLarge)
                 Text(text = currentUser.email, style = MaterialTheme.typography.titleMedium)
             }
-
-            IconButton(onClick = {
-                showLogoutDialog = true
-            }) {
-                Icon(imageVector = Icons.AutoMirrored.Filled.Logout, contentDescription = "Logout")
-            }
+        } else {
+            Text(text = "No user is logged in.", modifier = Modifier.padding(16.dp), style = MaterialTheme.typography.titleLarge)
         }
-    } else {
-        Box(Modifier.fillMaxSize()) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+
+        IconButton(onClick = {
+            showLogoutDialog = true
+        }) {
+            Icon(imageVector = Icons.AutoMirrored.Filled.Logout, contentDescription = "Logout")
         }
     }
 
