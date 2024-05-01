@@ -52,7 +52,7 @@ open class NetworkService(
     private fun getAuthToken(): String? = settings.authToken?.let { "Token $it" }
 
     companion object {
-        private const val BASE_URL = "http://codedatabase.pythonanywhere.com/api/"
+        private const val BASE_URL = "https://codedatabase.pythonanywhere.com/api/"
     }
 }
 
