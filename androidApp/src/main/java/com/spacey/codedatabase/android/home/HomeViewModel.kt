@@ -1,22 +1,20 @@
 package com.spacey.codedatabase.android.home
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.spacey.codedatabase.AppComponent
+import com.spacey.codedatabase.android.base.BaseViewModel
 import com.spacey.codedatabase.question.Question
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class HomeViewModel : ViewModel() {
+class HomeViewModel : BaseViewModel<HomeUiState, HomeEvent>() {
 
-    private val _uiState = MutableStateFlow(HomeUiState())
-    val uiState: StateFlow<HomeUiState> = _uiState
+    override val _uiState = MutableStateFlow(HomeUiState())
 
     private val repository by lazy { AppComponent.instance.questionRepo }
 
-    fun onEvent(event: HomeEvent) {
+    override fun onEvent(event: HomeEvent) {
         when (event) {
             is HomeEvent.Initialise -> {
                 refreshQuestionList()
