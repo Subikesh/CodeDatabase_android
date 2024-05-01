@@ -30,7 +30,7 @@ import com.spacey.codedatabase.question.Question
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CdSearchBar(query: String, isSearchLoading: Boolean, searchResults: List<Question>, onQueryChange: (String) -> Unit) {
+fun CodeDbSearchBar(query: String, isSearchLoading: Boolean, searchResults: List<Question>, onQueryChange: (String) -> Unit) {
     var searchActive by remember {
         mutableStateOf(false)
     }

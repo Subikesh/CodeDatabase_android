@@ -23,7 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
-import com.spacey.codedatabase.android.component.CdSearchBar
+import com.spacey.codedatabase.android.component.CodeDbSearchBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,12 +43,12 @@ fun HomeScreen(viewModel: HomeViewModel) {
             viewModel.onEvent(HomeEvent.PullToRefresh)
         }
     }
-    if (uiState.loadingState == LoadingState.INITIAL || uiState.loadingState == LoadingState.SEARCH) {
+    if (uiState.loadingState == HomeLoadingState.INITIAL || uiState.loadingState == HomeLoadingState.SEARCH) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             CircularProgressIndicator()
         }
     } else {
-        if (uiState.loadingState == LoadingState.REFRESH) {
+        if (uiState.loadingState == HomeLoadingState.REFRESH) {
             LaunchedEffect(key1 = true) {
                 pullToRefreshState.startRefresh()
             }
@@ -61,9 +61,9 @@ fun HomeScreen(viewModel: HomeViewModel) {
             .fillMaxSize()
             .padding(top = 16.dp, start = 16.dp, end = 16.dp)) {
 
-            CdSearchBar(
+            CodeDbSearchBar(
                 query = query,
-                isSearchLoading = uiState.loadingState == LoadingState.SEARCH,
+                isSearchLoading = uiState.loadingState == HomeLoadingState.SEARCH,
                 searchResults = uiState.searchResults
             ) {
                 query = it
