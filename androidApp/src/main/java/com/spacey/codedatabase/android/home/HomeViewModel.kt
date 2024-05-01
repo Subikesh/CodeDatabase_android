@@ -14,7 +14,7 @@ class HomeViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState
 
-    private val repository by lazy { AppComponent.questionRepo }
+    private val repository by lazy { AppComponent.instance.questionRepo }
 
     fun onEvent(event: HomeEvent) {
         when (event) {
