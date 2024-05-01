@@ -11,19 +11,22 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
-open class NetworkService(private val httpClient: HttpClient = HttpClient(httpClientEngine) {
-    install(Logging)
-    install(ContentNegotiation) {
-        json(Json {
-            isLenient = true
-            ignoreUnknownKeys = true
-        })
+open class NetworkService(
+    private val settings: Settings,
+    private val httpClient: HttpClient = HttpClient(httpClientEngine) {
+        install(Logging)
+        install(ContentNegotiation) {
+            json(Json {
+                isLenient = true
+                ignoreUnknownKeys = true
+            })
+        }
     }
-}) {
+) {
 
     protected suspend fun request(endpoint: String, block: HttpRequestBuilder.() -> Unit = {}): HttpResponse {
         return httpClient.request {
-            url("${BASE_URL}$endpoint")
+            url("${BASE_URL}$endpoint/")
             getAuthToken()?.let {
                 headers["Authorization"] = it
             }
@@ -31,8 +34,7 @@ open class NetworkService(private val httpClient: HttpClient = HttpClient(httpCl
         }
     }
 
-    // TODO: Get auth from user
-    private fun getAuthToken(): String? = null
+    private fun getAuthToken(): String? = settings.authToken
 
     companion object {
         private const val BASE_URL = "http://10.0.2.2:8000/api/"
