@@ -17,6 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -24,8 +25,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -33,10 +35,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.spacey.codedatabase.android.home.HomeScreen
+import com.spacey.codedatabase.android.home.HomeViewModel
 
 @Composable
-fun HomeNavigation() {
-    val navController = rememberNavController()
+fun HomeNavigation(homeViewModel: HomeViewModel = viewModel(), navController: NavHostController = rememberNavController()) {
     val backstackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backstackEntry?.destination?.route ?: Destination.HOME.route
 
@@ -86,7 +88,7 @@ fun HomeNavigation() {
             NavHost(navController = navController, startDestination = currentRoute) {
                 composable(Destination.HOME.route) {
                     fabState = FabState.ADD
-                    HomeScreen()
+                    HomeScreen(homeViewModel)
                 }
                 composable(Destination.ACCOUNT.route) {
                     fabState = FabState.EDIT
@@ -126,15 +128,15 @@ sealed class Destination(
     data object SUBMIT : Destination("home", Icons.Default.Done, "Submit form")
 }
 
-fun NavHostController.navigateTopLevel(route: String) {
+fun NavController.navigateTopLevel(route: String) {
     this.navigate(route) {
         popUpTo(this@navigateTopLevel.graph.findStartDestination().id)
         launchSingleTop = true
     }
 }
-
-@Preview
-@Composable
-fun PreviewHome() {
-    HomeNavigation()
-}
+//
+//@Preview
+//@Composable
+//fun PreviewHome() {
+//    HomeNavigation()
+//}
