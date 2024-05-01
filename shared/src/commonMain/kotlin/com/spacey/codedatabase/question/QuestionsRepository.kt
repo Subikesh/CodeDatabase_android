@@ -1,13 +1,14 @@
 package com.spacey.codedatabase.question
 
 import com.spacey.codedatabase.BaseRepository
+import com.spacey.codedatabase.CodeDbCache
 import kotlinx.coroutines.withContext
 
-class QuestionsRepository(private val apiService: QuestionsApiService, private val questionsCache: QuestionsCache) : BaseRepository() {
+class QuestionsRepository(private val apiService: QuestionsApiService, private val codeDbCache: CodeDbCache) : BaseRepository() {
     suspend fun getQuestions(): Result<List<Question>> {
         return withContext(defaultContext) {
             apiService.getAllQuestions().also {
-                questionsCache.questions = it.getOrNull()
+                codeDbCache.questions = it.getOrNull()
             }
         }
     }
@@ -16,7 +17,7 @@ class QuestionsRepository(private val apiService: QuestionsApiService, private v
      * Filter questions from the stored cache. If cache is empty, refresh the list
      */
     suspend fun filterQuestions(query: String): Result<List<Question>> {
-        val cache = questionsCache.questions
+        val cache = codeDbCache.questions
         if (!cache.isNullOrEmpty()) {
             return Result.success(if (query.isNotBlank()) cache.search(query) else cache)
         }

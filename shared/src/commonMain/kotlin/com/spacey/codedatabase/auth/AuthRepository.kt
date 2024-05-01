@@ -1,10 +1,13 @@
 package com.spacey.codedatabase.auth
 
+import com.spacey.codedatabase.BaseRepository
+import com.spacey.codedatabase.CodeDbCache
 import com.spacey.codedatabase.Settings
 import io.ktor.client.call.body
 import io.ktor.http.isSuccess
+import kotlinx.coroutines.withContext
 
-class AuthRepository(private val settings: Settings, private val authApiService: AuthApiService) {
+class AuthRepository(private val settings: Settings, private val authApiService: AuthApiService, private val codeDbCache: CodeDbCache) : BaseRepository() {
 
     suspend fun authenticate(username: String, password: String): String? {
         try {
@@ -27,5 +30,6 @@ class AuthRepository(private val settings: Settings, private val authApiService:
 
     fun logout() {
         settings.authToken = null
+        codeDbCache.clear()
     }
 }
