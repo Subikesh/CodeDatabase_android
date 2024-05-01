@@ -20,6 +20,8 @@ class AuthApiService(settings: Settings) : NetworkService(settings) {
             ))
         }
     }
+
+    suspend fun getCurrentUser(): Result<User> = serializedRequest("user")
 }
 
 @Serializable
