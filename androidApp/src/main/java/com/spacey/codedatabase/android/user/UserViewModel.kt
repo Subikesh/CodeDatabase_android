@@ -2,23 +2,21 @@ package com.spacey.codedatabase.android.user
 
 import androidx.lifecycle.viewModelScope
 import com.spacey.codedatabase.AppComponent
-import com.spacey.codedatabase.android.auth.AuthEvent
 import com.spacey.codedatabase.android.base.BaseViewModel
 import com.spacey.codedatabase.auth.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 class UserViewModel : BaseViewModel<UserUiState, UserEvent>() {
-    override val _uiState = MutableStateFlow(UserUiState())
-
     private val authRepository = AppComponent.instance.authRepository
+
+    override val _uiState = MutableStateFlow(UserUiState(authRepository.getCachedUser()))
 
     override fun onEvent(event: UserEvent) {
         when (event) {
-            UserEvent.Initiate -> {
-                _uiState.value = uiState.value.copy(isLoading = true)
+            is UserEvent.Initiate -> {
                 viewModelScope.launch {
-                    _uiState.value = uiState.value.copy(isLoading = false, currentUser = authRepository.getCurrentUser().getOrNull())
+                    _uiState.value = uiState.value.copy(currentUser = authRepository.getCurrentUser().getOrNull())
                 }
             }
 
@@ -30,11 +28,10 @@ class UserViewModel : BaseViewModel<UserUiState, UserEvent>() {
 }
 
 sealed class UserEvent {
-    data object Initiate : UserEvent()
+    data class Initiate(val isLoggedIn: Boolean) : UserEvent()
     data object Logout : UserEvent()
 }
 
 data class UserUiState(
-    val isLoading: Boolean = false,
-    val currentUser: User? = null
+    val currentUser: User?
 )

@@ -25,14 +25,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun UserScreen(userViewModel: UserViewModel, navigateToLogin: () -> Unit) {
+fun UserScreen(isLoggedIn: Boolean, userViewModel: UserViewModel, navigateToLogin: () -> Unit) {
     val uiState by userViewModel.uiState.collectAsState()
     var showLogoutDialog by remember {
         mutableStateOf(false)
     }
 
     LaunchedEffect(key1 = true) {
-        userViewModel.onEvent(UserEvent.Initiate)
+        userViewModel.onEvent(UserEvent.Initiate(isLoggedIn))
     }
 
     val currentUser = uiState.currentUser
@@ -55,18 +55,22 @@ fun UserScreen(userViewModel: UserViewModel, navigateToLogin: () -> Unit) {
     }
 
     if (showLogoutDialog) {
-        AlertDialog(onDismissRequest = {
-            showLogoutDialog = false
-        }, confirmButton = {
-            Button(onClick = {
-                userViewModel.onEvent(UserEvent.Logout)
-                navigateToLogin()
-            }) {
-                Text(text = "Yes, Logout!")
-            }
-        }, text = {
-            Text(text = "Are you sure you want to logout?")
-        })
+        if (uiState.currentUser != null) {
+            AlertDialog(onDismissRequest = {
+                showLogoutDialog = false
+            }, confirmButton = {
+                Button(onClick = {
+                    userViewModel.onEvent(UserEvent.Logout)
+                    navigateToLogin()
+                }) {
+                    Text(text = "Yes, Logout!")
+                }
+            }, text = {
+                Text(text = "Are you sure you want to logout?")
+            })
+        } else {
+            navigateToLogin()
+        }
     }
 
 }

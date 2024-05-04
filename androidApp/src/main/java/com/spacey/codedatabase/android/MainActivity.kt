@@ -27,9 +27,9 @@ class MainActivity : ComponentActivity() {
                             LoginScreen(navController, authViewModel)
                         }
                         composable(TopLevelDestination.CODE_DB.route) {
-                            HomeNavigation {
+                            HomeNavigation(it.arguments?.getBoolean("is_logged_in") ?: false, navigateToLogin = {
                                 navController.navigateTopLevel(TopLevelDestination.LOGIN.route)
-                            }
+                            })
                         }
                     }
                 }
@@ -39,5 +39,5 @@ class MainActivity : ComponentActivity() {
 }
 
 enum class TopLevelDestination(val route: String) {
-    LOGIN("login"), CODE_DB("code_database")
+    LOGIN("login"), CODE_DB("code_database/{is_logged_in}")
 }

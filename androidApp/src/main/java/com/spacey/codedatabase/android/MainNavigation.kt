@@ -34,6 +34,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.spacey.codedatabase.android.auth.AuthUtil
 import com.spacey.codedatabase.android.home.HomeScreen
 import com.spacey.codedatabase.android.home.HomeViewModel
 import com.spacey.codedatabase.android.user.UserScreen
@@ -41,6 +42,7 @@ import com.spacey.codedatabase.android.user.UserViewModel
 
 @Composable
 fun HomeNavigation(
+    isUserLoggedIn: Boolean,
     homeViewModel: HomeViewModel = viewModel(),
     userViewModel: UserViewModel = viewModel(),
     navController: NavHostController = rememberNavController(),
@@ -72,22 +74,24 @@ fun HomeNavigation(
             }
         }
     }, floatingActionButton = {
-        LargeFloatingActionButton(
-            shape = RoundedCornerShape(20.dp),
-            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-            contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
-            onClick = {
-                if (fabState == FabState.SUBMIT) {
-                    submitClicked = true
+        if (AuthUtil.isUserAuthenticated()) {
+            LargeFloatingActionButton(
+                shape = RoundedCornerShape(20.dp),
+                containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                onClick = {
+                    if (fabState == FabState.SUBMIT) {
+                        submitClicked = true
+                    }
+                    navController.navigate(fabState.destination.route)
+                }) {
+                AnimatedContent(targetState = fabState, label = "Home FAB") { fabState ->
+                    Icon(
+                        imageVector = fabState.destination.icon,
+                        contentDescription = fabState.destination.label,
+                        Modifier.size(28.dp)
+                    )
                 }
-                navController.navigate(fabState.destination.route)
-            }) {
-            AnimatedContent(targetState = fabState, label = "Home FAB") { fabState ->
-                Icon(
-                    imageVector = fabState.destination.icon,
-                    contentDescription = fabState.destination.label,
-                    Modifier.size(28.dp)
-                )
             }
         }
     }) {
@@ -99,7 +103,7 @@ fun HomeNavigation(
                 }
                 composable(Destination.ACCOUNT.route) {
                     fabState = FabState.EDIT
-                    UserScreen(userViewModel, navigateToLogin)
+                    UserScreen(isUserLoggedIn, userViewModel, navigateToLogin)
                 }
                 composable(Destination.NEW_QUESTION.route) {
                     fabState = FabState.SUBMIT

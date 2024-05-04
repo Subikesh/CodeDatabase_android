@@ -1,10 +1,12 @@
 package com.spacey.codedatabase.android.auth
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -39,6 +41,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.spacey.codedatabase.android.TopLevelDestination
+import com.spacey.codedatabase.android.getRoute
 import com.spacey.codedatabase.android.navigateTopLevel
 
 @Composable
@@ -60,64 +63,62 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel) {
     }
     if (uiState.isAuthenticated) {
         LaunchedEffect(key1 = true) {
-            Log.d("Refresh", "Refresh screen")
-            navController.navigateTopLevel(TopLevelDestination.CODE_DB.route)
+            navController.navigateTopLevel(TopLevelDestination.CODE_DB.route.getRoute(true.toString()))
         }
     }
-
-    if (uiState.isLoading) {
-        Log.d("Refresh", "Loading")
-        Box(modifier = Modifier.fillMaxSize()) {
-            CircularProgressIndicator()
-        }
-    } else {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.secondaryContainer)
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.secondaryContainer)
+    ) {
+        Card(
+            shape = RoundedCornerShape(20.dp), modifier = Modifier
+                .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                .align(Alignment.Center)
+                .shadow(10.dp)
+                .fillMaxWidth(0.8f)
         ) {
-            Card(
-                shape = RoundedCornerShape(20.dp), modifier = Modifier
-                    .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                    .align(Alignment.Center)
-                    .shadow(10.dp)
-            ) {
-                Text(
-                    text = "Login", style = MaterialTheme.typography.displayMedium, modifier = Modifier
-                        .padding(32.dp)
-                        .align(Alignment.CenterHorizontally)
-                )
-                TextField(label = { Text("UserName") }, value = userName, onValueChange = {
-                    userName = it
-                }, leadingIcon = {
-                    Icon(imageVector = Icons.Default.AccountCircle, contentDescription = "Username")
-                }, modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp))
+            Text(
+                text = "Login",
+                style = MaterialTheme.typography.displayMedium,
+                modifier = Modifier
+                    .padding(32.dp)
+                    .align(Alignment.CenterHorizontally)
+            )
+            TextField(label = { Text("UserName") }, value = userName, onValueChange = {
+                userName = it
+            }, leadingIcon = {
+                Icon(imageVector = Icons.Default.AccountCircle, contentDescription = "Username")
+            }, modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp))
 
-                TextField(
-                    value = password,
-                    label = { Text("Password") },
-                    leadingIcon = { Icon(imageVector = Icons.Default.Lock, contentDescription = "Password") },
-                    visualTransformation = if (isPassVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                    trailingIcon = {
-                        IconButton(onClick = { isPassVisible = !isPassVisible }) {
-                            Icon(
-                                imageVector = if (isPassVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
-                                contentDescription = "Password visibility"
-                            )
-                        }
+            TextField(
+                value = password,
+                label = { Text("Password") },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Lock,
+                        contentDescription = "Password"
+                    )
+                },
+                visualTransformation = if (isPassVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                trailingIcon = {
+                    IconButton(onClick = { isPassVisible = !isPassVisible }) {
+                        Icon(
+                            imageVector = if (isPassVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
+                            contentDescription = "Password visibility"
+                        )
+                    }
 
-                    },
-                    onValueChange = {
-                        password = it
-                    },
-                    modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp)
-                )
+                },
+                onValueChange = {
+                    password = it
+                },
+                modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp)
+            )
 
+            Row(Modifier.padding(horizontal = 24.dp, vertical = 12.dp).fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                 Button(
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(top = 12.dp, bottom = 24.dp),
                     onClick = { authViewModel.onEvent(AuthEvent.Login(userName, password)) },
                     enabled = !uiState.isLoading
                 ) {
@@ -127,18 +128,35 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel) {
                         Text(text = "Login")
                     }
                 }
-            }
-            TextButton(modifier = Modifier.align(Alignment.BottomEnd), enabled = !uiState.isLoading, onClick = {
-                navController.navigateTopLevel("code_database")
-            }) {
-                Text("Continue without login >")
+
+                Button(
+                    modifier = Modifier
+                        .padding(start = 12.dp),
+                    onClick = { /*TODO*/ }
+                ) {
+                    Text(text = "Register")
+                }
+
             }
 
-            val error = uiState.loginError
-            if (error != null) {
-                password = ""
-                Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
-            }
+            Text(
+                text = "Sample credentials for login. \n * Username: jimhalpert\n * Password: JimHalpert123",
+                modifier = Modifier.padding(top = 12.dp, bottom = 24.dp, start = 24.dp, end = 24.dp)
+            )
+        }
+        TextButton(
+            modifier = Modifier.align(Alignment.BottomEnd),
+            enabled = !uiState.isLoading,
+            onClick = {
+                navController.navigateTopLevel(TopLevelDestination.CODE_DB.route.getRoute(false.toString()))
+            }) {
+            Text("Continue without login >")
+        }
+
+        val error = uiState.loginError
+        if (error != null) {
+            password = ""
+            Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
         }
     }
 }
