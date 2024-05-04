@@ -29,21 +29,18 @@ class AuthRepository(private val settings: Settings, private val authApiService:
 
     suspend fun getCurrentUser(): Result<User> {
         return try {
-            val cachedUser = codeDbCache.currentUser
-            if (cachedUser == null) {
-                withContext(defaultContext) {
-                    authApiService.getCurrentUser().map {
-                        codeDbCache.currentUser = it
-                        it
-                    }
+            withContext(defaultContext) {
+                authApiService.getCurrentUser().map {
+                    codeDbCache.currentUser = it
+                    it
                 }
-            } else {
-                Result.success(cachedUser)
             }
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
+
+    fun getCachedUser(): User? = codeDbCache.currentUser
 
     fun getAuthToken() = settings.authToken
 
