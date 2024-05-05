@@ -22,9 +22,16 @@ class AuthViewModel : BaseViewModel<AuthUiState, AuthEvent>() {
 
                 is AuthEvent.Login -> {
                     _uiState.value = uiState.value.copy(isLoading = true, loginError = null)
-                    val token = authRepository.authenticate(event.userName, event.password)
-                    if (token == null) {
-                        loginError = "Your credentials are invalid. Please check your username or password and try again!"
+                    var token: String? = null
+                    if (event.userName.isEmpty()) {
+                        loginError = "Username cannot be empty. Please check your username and try again!"
+                    } else if (event.password.isEmpty()) {
+                        loginError = "Password cannot be empty. Please check your password and try again!"
+                    } else {
+                        token = authRepository.authenticate(event.userName, event.password)
+                        if (token == null) {
+                            loginError = "Your credentials are invalid. Please check your username or password and try again!"
+                        }
                     }
                     token
                 }

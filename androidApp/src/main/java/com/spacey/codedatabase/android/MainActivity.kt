@@ -21,7 +21,7 @@ class MainActivity : ComponentActivity() {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     val navController = rememberNavController()
                     val authViewModel: AuthViewModel = viewModel()
-                    val startDestination = if (authViewModel.isAuthenticated()) TopLevelDestination.CODE_DB.route else TopLevelDestination.LOGIN.route
+                    val startDestination = if (authViewModel.isAuthenticated()) TopLevelDestination.CODE_DB.route.getRoute(true.toString()) else TopLevelDestination.LOGIN.route
                     NavHost(navController = navController, startDestination = startDestination) {
                         composable(TopLevelDestination.LOGIN.route) {
                             LoginScreen(navController, authViewModel)
