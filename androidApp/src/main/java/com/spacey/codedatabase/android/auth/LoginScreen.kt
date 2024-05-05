@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -33,7 +34,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -72,10 +72,10 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel) {
             .background(MaterialTheme.colorScheme.secondaryContainer)
     ) {
         Card(
-            shape = RoundedCornerShape(20.dp), modifier = Modifier
-                .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+            shape = RoundedCornerShape(20.dp),
+            elevation = CardDefaults.cardElevation(10.dp),
+            modifier = Modifier
                 .align(Alignment.Center)
-                .shadow(10.dp)
                 .fillMaxWidth(0.8f)
         ) {
             Text(
@@ -117,7 +117,10 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel) {
                 modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp)
             )
 
-            Row(Modifier.padding(horizontal = 24.dp, vertical = 12.dp).fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+            Row(
+                Modifier
+                    .padding(horizontal = 24.dp, vertical = 12.dp)
+                    .fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                 Button(
                     onClick = { authViewModel.onEvent(AuthEvent.Login(userName, password)) },
                     enabled = !uiState.isLoading
