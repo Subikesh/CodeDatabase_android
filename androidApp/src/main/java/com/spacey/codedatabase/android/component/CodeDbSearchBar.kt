@@ -36,7 +36,6 @@ fun CodeDbSearchBar(query: String, isSearchLoading: Boolean, searchResults: List
     }
 
     DockedSearchBar(query = query, modifier = Modifier.fillMaxWidth(), onQueryChange = onQueryChange, onSearch = {
-        /*TODO*/
         searchActive = false
     }, active = searchActive, onActiveChange = {
         searchActive = it
@@ -71,7 +70,7 @@ fun CodeDbSearchBar(query: String, isSearchLoading: Boolean, searchResults: List
                 }
             } else {
                 items(searchResults) { question ->
-                    Text(text = question.title, modifier = Modifier.padding(top = 8.dp))
+                    Text(text = question.title, modifier = Modifier.padding(8.dp))
                     HorizontalDivider()
                 }
             }
