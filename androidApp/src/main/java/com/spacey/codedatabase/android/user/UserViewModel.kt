@@ -16,6 +16,9 @@ class UserViewModel : BaseViewModel<UserUiState, UserEvent>() {
         when (event) {
             is UserEvent.Initiate -> {
                 viewModelScope.launch {
+                    if (event.isLoggedIn) {
+                        _uiState.value = uiState.value.copy(currentUser = authRepository.getCachedUser())
+                    }
                     _uiState.value = uiState.value.copy(currentUser = authRepository.getCurrentUser().getOrNull())
                 }
             }

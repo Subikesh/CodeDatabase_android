@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
@@ -69,9 +69,11 @@ fun CodeDbSearchBar(query: String, isSearchLoading: Boolean, searchResults: List
                     }
                 }
             } else {
-                items(searchResults) { question ->
+                itemsIndexed(searchResults) { i, question ->
                     Text(text = question.title, modifier = Modifier.padding(8.dp))
-                    HorizontalDivider()
+                    if (i < searchResults.size - 1) {
+                        HorizontalDivider()
+                    }
                 }
             }
         }

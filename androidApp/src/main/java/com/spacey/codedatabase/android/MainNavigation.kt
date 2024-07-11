@@ -19,6 +19,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,7 +43,7 @@ import com.spacey.codedatabase.android.user.UserViewModel
 
 @Composable
 fun HomeNavigation(
-    isUserLoggedIn: Boolean,
+    isUserLoggedInFromLogin: Boolean,
     homeViewModel: HomeViewModel = viewModel(),
     userViewModel: UserViewModel = viewModel(),
     navController: NavHostController = rememberNavController(),
@@ -57,6 +58,14 @@ fun HomeNavigation(
 
     var submitClicked by remember {
         mutableStateOf(false)
+    }
+
+    var isUserAuthenticated by remember {
+        mutableStateOf(isUserLoggedInFromLogin)
+    }
+
+    LaunchedEffect(true) {
+        isUserAuthenticated = AuthUtil.isUserAuthenticated()
     }
 
     Scaffold(bottomBar = {
@@ -74,7 +83,7 @@ fun HomeNavigation(
             }
         }
     }, floatingActionButton = {
-        if (AuthUtil.isUserAuthenticated()) {
+        if (isUserAuthenticated) {
             LargeFloatingActionButton(
                 shape = RoundedCornerShape(20.dp),
                 containerColor = MaterialTheme.colorScheme.tertiaryContainer,
@@ -103,7 +112,7 @@ fun HomeNavigation(
                 }
                 composable(Destination.ACCOUNT.route) {
                     fabState = FabState.EDIT
-                    UserScreen(isUserLoggedIn, userViewModel, navigateToLogin)
+                    UserScreen(isUserLoggedInFromLogin, userViewModel, navigateToLogin)
                 }
                 composable(Destination.NEW_QUESTION.route) {
                     fabState = FabState.SUBMIT
