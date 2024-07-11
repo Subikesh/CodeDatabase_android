@@ -4,6 +4,7 @@ import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -125,11 +126,7 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel) {
                     onClick = { authViewModel.onEvent(AuthEvent.Login(userName, password)) },
                     enabled = !uiState.isLoading
                 ) {
-                    if (uiState.isLoading) {
-                        CircularProgressIndicator()
-                    } else {
-                        Text(text = "Login")
-                    }
+                    Text(text = "Login")
                 }
 
                 Button(
@@ -154,6 +151,16 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel) {
                 navController.navigateTopLevel(TopLevelDestination.CODE_DB.route.getRoute(false.toString()))
             }) {
             Text("Continue without login >")
+        }
+        if (uiState.isLoading) {
+            Box(modifier = Modifier
+                .matchParentSize()
+                .background(MaterialTheme.colorScheme.secondaryContainer.copy(0.5f)))
+
+            Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+                CircularProgressIndicator()
+                Text(text = "Logging in...")
+            }
         }
 
         val error = uiState.loginError
