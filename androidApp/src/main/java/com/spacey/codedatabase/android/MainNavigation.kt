@@ -1,5 +1,6 @@
 package com.spacey.codedatabase.android
 
+import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -26,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -36,6 +38,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.spacey.codedatabase.android.auth.AuthUtil
+import com.spacey.codedatabase.android.form.FormScreen
 import com.spacey.codedatabase.android.home.HomeScreen
 import com.spacey.codedatabase.android.home.HomeViewModel
 import com.spacey.codedatabase.android.user.UserScreen
@@ -116,7 +119,9 @@ fun HomeNavigation(
                 }
                 composable(Destination.NEW_QUESTION.route) {
                     fabState = FabState.SUBMIT
-                    EmptyComingSoon()
+                    FormScreen(preFill = null) {
+                        navController.navigateUp()
+                    }
                 }
                 composable(Destination.EDIT_QUESTION.route) {
                     fabState = FabState.SUBMIT
