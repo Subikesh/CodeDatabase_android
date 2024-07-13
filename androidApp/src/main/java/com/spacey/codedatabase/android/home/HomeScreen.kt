@@ -23,17 +23,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
+import com.spacey.codedatabase.android.FabConfig
 import com.spacey.codedatabase.android.component.CodeDbSearchBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(viewModel: HomeViewModel) {
+fun HomeScreen(viewModel: HomeViewModel, setFabConfig: (FabConfig) -> Unit) {
     val uiState by viewModel.uiState.collectAsState()
 
     var query by remember {
         mutableStateOf("")
     }
     val pullToRefreshState = rememberPullToRefreshState()
+
+    LaunchedEffect(key1 = true) {
+        setFabConfig(FabConfig.AddQuestion())
+    }
 
     LaunchedEffect(key1 = true) {
         viewModel.onEvent(HomeEvent.Initialise)

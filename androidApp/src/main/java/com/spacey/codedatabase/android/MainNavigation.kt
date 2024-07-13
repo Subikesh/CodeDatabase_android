@@ -1,6 +1,5 @@
 package com.spacey.codedatabase.android
 
-import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -27,16 +26,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.spacey.codedatabase.android.auth.AuthUtil
 import com.spacey.codedatabase.android.form.FormScreen
 import com.spacey.codedatabase.android.home.HomeScreen
@@ -55,12 +55,8 @@ fun HomeNavigation(
     val backstackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backstackEntry?.destination?.route ?: Destination.HOME.route
 
-    var fabState: FabState by remember {
-        mutableStateOf(FabState.ADD)
-    }
-
-    var submitClicked by remember {
-        mutableStateOf(false)
+    val (fabConfig, setFabConfig) = remember {
+        mutableStateOf<FabConfig?>(null)
     }
 
     var isUserAuthenticated by remember {
@@ -86,18 +82,18 @@ fun HomeNavigation(
             }
         }
     }, floatingActionButton = {
-        if (isUserAuthenticated) {
+        if (isUserAuthenticated && fabConfig != null) {
             LargeFloatingActionButton(
                 shape = RoundedCornerShape(20.dp),
                 containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                 contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
                 onClick = {
-                    if (fabState == FabState.SUBMIT) {
-                        submitClicked = true
+                    fabConfig.onClick?.invoke()
+                    if (currentRoute != fabConfig.destination.route) {
+                        navController.navigate(fabConfig.destination.route)
                     }
-                    navController.navigate(fabState.destination.route)
                 }) {
-                AnimatedContent(targetState = fabState, label = "Home FAB") { fabState ->
+                AnimatedContent(targetState = fabConfig, label = "${fabConfig.destination.label} FAB") { fabState ->
                     Icon(
                         imageVector = fabState.destination.icon,
                         contentDescription = fabState.destination.label,
@@ -110,21 +106,18 @@ fun HomeNavigation(
         Box(modifier = Modifier.padding(it)) {
             NavHost(navController = navController, startDestination = currentRoute) {
                 composable(Destination.HOME.route) {
-                    fabState = FabState.ADD
-                    HomeScreen(homeViewModel)
+                    HomeScreen(homeViewModel, setFabConfig)
                 }
                 composable(Destination.ACCOUNT.route) {
-                    fabState = FabState.EDIT
-                    UserScreen(isUserLoggedInFromLogin, userViewModel, navigateToLogin)
+                    UserScreen(isUserLoggedInFromLogin, userViewModel, navigateToLogin, setFabConfig)
                 }
                 composable(Destination.NEW_QUESTION.route) {
-                    fabState = FabState.SUBMIT
-                    FormScreen(preFill = null) {
-                        navController.navigateUp()
-                    }
+                    FormScreen(preFill = null, setFabConfig)
                 }
-                composable(Destination.EDIT_QUESTION.route) {
-                    fabState = FabState.SUBMIT
+                composable(Destination.EDIT_QUESTION.route, arguments = listOf(navArgument("question_id") { type = NavType.StringType })) {
+                    LaunchedEffect(key1 = true) {
+                        setFabConfig(FabConfig.EditQuestion())
+                    }
                     EmptyComingSoon()
                 }
             }
@@ -132,8 +125,11 @@ fun HomeNavigation(
     }
 }
 
-enum class FabState(val destination: Destination) {
-    ADD(Destination.NEW_QUESTION), EDIT(Destination.EDIT_QUESTION), SUBMIT(Destination.SUBMIT)
+sealed class FabConfig(val destination: Destination, val onClick: (() -> Unit)?) {
+    class AddQuestion(onClick: (() -> Unit)? = null) : FabConfig(Destination.NEW_QUESTION, onClick)
+    class EditQuestion(onClick: (() -> Unit)? = null) : FabConfig(Destination.EDIT_QUESTION, onClick)
+    class EditUser(onClick: (() -> Unit)? = null) : FabConfig(Destination.EDIT_ACCOUNT, onClick)
+    class SubmitForm(onClick: (() -> Unit)? = null) : FabConfig(Destination.SUBMIT, onClick)
 }
 
 val TOP_LEVEL_DESTINATIONS = listOf(
@@ -148,6 +144,7 @@ sealed class Destination(
 ) {
     data object HOME : Destination("home", Icons.Default.Home, "Home")
     data object ACCOUNT : Destination("account", Icons.Default.AccountCircle, "Account")
+    data object EDIT_ACCOUNT : Destination("edit_user/{user_id}", Icons.Default.Edit, "Edit user")
     data object NEW_QUESTION : Destination("add_question", Icons.Default.Add, "New Question")
     data object EDIT_QUESTION : Destination("edit_question/{question_id}", Icons.Default.Edit, "Edit question")
     data object SUBMIT : Destination("home", Icons.Default.Done, "Submit form")

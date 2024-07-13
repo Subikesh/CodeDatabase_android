@@ -7,9 +7,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.spacey.codedatabase.android.auth.AuthViewModel
 import com.spacey.codedatabase.android.auth.LoginScreen
 
@@ -26,8 +28,13 @@ class MainActivity : ComponentActivity() {
                         composable(TopLevelDestination.LOGIN.route) {
                             LoginScreen(navController, authViewModel)
                         }
-                        composable(TopLevelDestination.CODE_DB.route) {
-                            HomeNavigation(it.arguments?.getBoolean("is_logged_in") ?: false, navigateToLogin = {
+                        composable(
+                            TopLevelDestination.CODE_DB.route,
+                            arguments = listOf(
+                                navArgument("is_logged_in") { type = NavType.BoolType }
+                            )
+                        ) {
+                            HomeNavigation(it.arguments?.getBoolean("is_logged_in") == true, navigateToLogin = {
                                 navController.navigateTopLevel(TopLevelDestination.LOGIN.route)
                             })
                         }

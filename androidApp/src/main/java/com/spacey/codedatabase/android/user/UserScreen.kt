@@ -23,15 +23,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.spacey.codedatabase.android.FabConfig
 
 @Composable
-fun UserScreen(isLoggedIn: Boolean, userViewModel: UserViewModel, navigateToLogin: () -> Unit) {
+fun UserScreen(isLoggedIn: Boolean, userViewModel: UserViewModel, navigateToLogin: () -> Unit, setFabConfig: (FabConfig?) -> Unit) {
     val uiState by userViewModel.uiState.collectAsState()
     var showLogoutDialog by remember {
         mutableStateOf(false)
     }
 
     LaunchedEffect(key1 = true) {
+        /*// TODO: Remove fab until implemented
+        setFabConfig(FabConfig.EditUser())*/
         userViewModel.onEvent(UserEvent.Initiate(isLoggedIn))
     }
 

@@ -7,17 +7,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuBoxScope
 import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -28,12 +26,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.spacey.codedatabase.android.FabConfig
 import com.spacey.codedatabase.question.Difficulty
 import com.spacey.codedatabase.question.Question
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FormScreen(preFill: Question?, onSubmit: (Question) -> Unit) {
+fun FormScreen(preFill: Question?, setFabConfig: (FabConfig?) -> Unit) {
     var title by remember {
         mutableStateOf(preFill?.title ?: "")
     }
@@ -61,8 +60,15 @@ fun FormScreen(preFill: Question?, onSubmit: (Question) -> Unit) {
         mutableStateOf(false)
     }
 
+    LaunchedEffect(key1 = true) {
+        setFabConfig(FabConfig.SubmitForm {
+            // TODO: On submit handling
+        })
+
+    }
+
     Column {
-        TopAppBar(title = { Text(text = "${if (preFill != null) "Add" else "Edit"} Question") })
+        TopAppBar(title = { Text(text = "${if (preFill != null) "Edit" else "Add" } Question") })
 
         TextField(value = title, onValueChange = { title = it }, label = { Text(text = "Title") }, modifier = Modifier
             .fillMaxWidth()
@@ -103,14 +109,18 @@ fun FormScreen(preFill: Question?, onSubmit: (Question) -> Unit) {
         }*/
 
 
-        ExposedDropdownMenuBox(expanded = difficultyDropdownExpanded, onExpandedChange = { difficultyDropdownExpanded = it }, modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+        ExposedDropdownMenuBox(expanded = difficultyDropdownExpanded, onExpandedChange = { difficultyDropdownExpanded = it }, modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)) {
             TextField(
                 value = difficulty?.name ?: "",
                 label = { Text("Difficulty") },
                 onValueChange = {},
                 readOnly = true,
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = difficultyDropdownExpanded) },
-                modifier = Modifier.menuAnchor().fillMaxWidth()
+                modifier = Modifier
+                    .menuAnchor()
+                    .fillMaxWidth()
             )
 
             ExposedDropdownMenu(
