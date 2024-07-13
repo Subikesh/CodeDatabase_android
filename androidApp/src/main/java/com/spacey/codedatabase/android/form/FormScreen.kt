@@ -11,6 +11,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
@@ -45,7 +46,7 @@ fun FormScreen(preFill: Question?, setFabConfig: (FabConfig?) -> Unit) {
     var difficulty by remember {
         mutableStateOf(preFill?.difficulty)
     }
-    var tag = remember {
+    val tagList = remember {
         mutableStateListOf(*(preFill?.tag?.toTypedArray() ?: emptyArray()))
     }
     var examples by remember {
@@ -68,7 +69,7 @@ fun FormScreen(preFill: Question?, setFabConfig: (FabConfig?) -> Unit) {
     }
 
     Column {
-        TopAppBar(title = { Text(text = "${if (preFill != null) "Edit" else "Add" } Question") })
+        TopAppBar(title = { Text(text = "${if (preFill != null) "Edit" else "Add"} Question") })
 
         TextField(value = title, onValueChange = { title = it }, label = { Text(text = "Title") }, modifier = Modifier
             .fillMaxWidth()
@@ -95,26 +96,14 @@ fun FormScreen(preFill: Question?, setFabConfig: (FabConfig?) -> Unit) {
             singleLine = false
         )
 
-      /*  ExposedDropdownMenuBox(expanded = tagDropdownExpanded, onExpandedChange = { tagDropdownExpanded = it }) {
-            for (tagItem in 1..10) {
-                ExposedDropdownMenuBox(text = { Text(tagItem.toString()) }, onClick = {
-                    if (tag.contains(tagItem)) {
-                        tag.remove(tagItem)
-                    } else {
-                        tag.add(tagItem)
-                    }
-                })
-            }
-
-        }*/
-
-
-        ExposedDropdownMenuBox(expanded = difficultyDropdownExpanded, onExpandedChange = { difficultyDropdownExpanded = it }, modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)) {
+        ExposedDropdownMenuBox(
+            expanded = difficultyDropdownExpanded, onExpandedChange = { difficultyDropdownExpanded = it }, modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
             TextField(
                 value = difficulty?.name ?: "",
-                label = { Text("Difficulty") },
+                placeholder = { Text("Difficulty") },
                 onValueChange = {},
                 readOnly = true,
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = difficultyDropdownExpanded) },
@@ -128,10 +117,50 @@ fun FormScreen(preFill: Question?, setFabConfig: (FabConfig?) -> Unit) {
                 onDismissRequest = { difficultyDropdownExpanded = false }
             ) {
                 for (diffItem in Difficulty.entries) {
-                    DropdownMenuItem(text = { Text(diffItem.name) }, onClick = {
+                    val color = if (diffItem == difficulty) {
+                        MaterialTheme.colorScheme.primaryContainer
+                    } else Color.Transparent
+                    DropdownMenuItem(text = { Text(diffItem.name) }, modifier = Modifier.fillMaxWidth().background(color), onClick = {
                         difficulty = diffItem
                         difficultyDropdownExpanded = false
                     })
+                }
+            }
+        }
+
+        ExposedDropdownMenuBox(
+            expanded = tagDropdownExpanded,
+            onExpandedChange = { tagDropdownExpanded = it },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            TextField(
+                value = tagList.sorted().joinToString(),
+                onValueChange = {},
+                readOnly = true,
+                placeholder = { Text(text = "Tag") },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = tagDropdownExpanded) },
+                modifier = Modifier
+                    .menuAnchor()
+                    .fillMaxWidth()
+            )
+
+            ExposedDropdownMenu(expanded = tagDropdownExpanded, onDismissRequest = { tagDropdownExpanded = false }) {
+                for (tag in 0..10) {
+                    val color = if (tagList.contains(tag))
+                        MaterialTheme.colorScheme.primaryContainer
+                    else Color.Transparent
+                    DropdownMenuItem(
+                        text = { Text("Tag $tag") },
+                        modifier = Modifier.background(color),
+                        onClick = {
+                            if (tagList.contains(tag)) {
+                                tagList.remove(tag)
+                            } else {
+                                tagList.add(tag)
+                            }
+                        })
                 }
             }
         }
